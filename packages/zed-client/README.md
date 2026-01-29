@@ -16,11 +16,33 @@ Zed editor extension that shows which React components are optimized by the [Rea
 
 - **Zed editor** (latest version recommended)
 - **Node.js**
+- **@react-compiler-marker/server** - The LSP server (see installation below)
 - **babel-plugin-react-compiler** installed in your project
 
 ## Installation
 
-### From Source / Development
+### Step 1: Install the LSP Server
+
+The React Compiler Marker extension requires the LSP server to be installed in your project. Since the package is not yet published to npm, install it directly from the repository:
+
+```bash
+# In your project directory
+npm install https://github.com/blazejkustra/react-compiler-marker/tarball/main#workspace=packages/server
+
+# Or add to your package.json:
+# "@react-compiler-marker/server": "github:blazejkustra/react-compiler-marker#workspace=packages/server"
+```
+
+Alternatively, if you have the repository cloned locally:
+
+```bash
+# From your project directory
+npm install /path/to/react-compiler-marker/packages/server
+```
+
+### Step 2: Install the Zed Extension
+
+#### From Source / Development
 
 1. Clone the repository:
    ```bash
@@ -30,7 +52,7 @@ Zed editor extension that shows which React components are optimized by the [Rea
 
 2. Build the extension:
    ```bash
-   cargo build --release --target wasm32-wasip1
+   cargo build --release --target wasm32-wasi
    ```
 
 3. Install as a dev extension in Zed:
@@ -39,7 +61,7 @@ Zed editor extension that shows which React components are optimized by the [Rea
    - Click "Install Dev Extension"
    - Select the `packages/zed-client` directory
 
-### From Zed Extensions (Coming Soon)
+#### From Zed Extensions (Coming Soon)
 
 The extension will be available in the Zed Extensions registry:
 
@@ -129,9 +151,25 @@ The extension uses a Language Server Protocol (LSP) server that:
 4. Displays inlay hints in your editor
 5. Provides hover tooltips with compilation details
 
-The extension is written in Rust and compiled to WebAssembly for Zed. It connects to the existing LSP server via `npx react-compiler-marker-lsp --stdio`.
+The extension is written in Rust and compiled to WebAssembly for Zed. It looks for the LSP server at `node_modules/@react-compiler-marker/server/bin/server.js` in your workspace, or via the `react-compiler-marker-lsp` command if available in your PATH.
 
 ## Troubleshooting
+
+### LSP Server not found error
+
+If you see an error about the LSP server not being found:
+
+1. Ensure you've installed the server in your project:
+   ```bash
+   npm install https://github.com/blazejkustra/react-compiler-marker/tarball/main#workspace=packages/server
+   ```
+
+2. Verify the installation:
+   ```bash
+   ls node_modules/@react-compiler-marker/server/bin/server.js
+   ```
+
+3. If using a workspace/monorepo, ensure the server is installed in the correct workspace root
 
 ### Inlay hints not showing
 
@@ -140,11 +178,13 @@ The extension is written in Rust and compiled to WebAssembly for Zed. It connect
    npm install babel-plugin-react-compiler
    ```
 
-2. Check that the LSP server is running:
+2. Ensure the LSP server is installed (see above)
+
+3. Check that the LSP server is running:
    - Open Zed's LSP logs
    - Look for "React Compiler Marker" server status
 
-3. Try manually refreshing:
+4. Try manually refreshing:
    - Open command palette (Cmd+Shift+P / Ctrl+Shift+P)
    - Run **React Compiler Marker: Check Current File**
 
@@ -153,12 +193,13 @@ The extension is written in Rust and compiled to WebAssembly for Zed. It connect
 1. Verify Node.js is installed and in your PATH:
    ```bash
    node --version
-   npx --version
    ```
 
-2. Check Zed's LSP logs for error messages
+2. Ensure the LSP server is installed (see "LSP Server not found error" above)
 
-3. Ensure the extension is activated:
+3. Check Zed's LSP logs for error messages
+
+4. Ensure the extension is activated:
    - Open command palette
    - Run **React Compiler Marker: Activate Extension**
 
