@@ -166,7 +166,17 @@ connection.languages.inlayHint.on(async (params: InlayHintParams): Promise<Inlay
   const languageId = document.languageId;
   logMessage(`Document language ID: ${languageId}`);
   
-  if (!["javascript", "typescript", "javascriptreact", "typescriptreact"].includes(languageId)) {
+  // Support both VS Code/Neovim IDs (javascriptreact, typescriptreact) and Zed IDs (jsx, tsx)
+  const supportedLanguages = [
+    "javascript", 
+    "typescript", 
+    "javascriptreact", // VS Code/Neovim for JSX
+    "typescriptreact", // VS Code/Neovim for TSX
+    "jsx",             // Zed for JSX
+    "tsx"              // Zed for TSX
+  ];
+  
+  if (!supportedLanguages.includes(languageId)) {
     logMessage(`Language ${languageId} not supported for inlay hints`);
     return null;
   }
@@ -221,7 +231,17 @@ connection.onHover((params: HoverParams): Hover | null => {
 
   // Only process JS/TS/JSX/TSX files
   const languageId = document.languageId;
-  if (!["javascript", "typescript", "javascriptreact", "typescriptreact"].includes(languageId)) {
+  // Support both VS Code/Neovim IDs (javascriptreact, typescriptreact) and Zed IDs (jsx, tsx)
+  const supportedLanguages = [
+    "javascript", 
+    "typescript", 
+    "javascriptreact", // VS Code/Neovim for JSX
+    "typescriptreact", // VS Code/Neovim for TSX
+    "jsx",             // Zed for JSX
+    "tsx"              // Zed for TSX
+  ];
+  
+  if (!supportedLanguages.includes(languageId)) {
     return null;
   }
 
