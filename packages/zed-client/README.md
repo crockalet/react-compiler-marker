@@ -21,53 +21,67 @@ Zed editor extension that shows which React components are optimized by the [Rea
 
 ## Installation
 
-### Step 1: Install the LSP Server
+### Quick Install
 
-The React Compiler Marker extension requires the LSP server to be installed in your project. Since the package is not yet published to npm, install it directly from the repository:
+1. **Clone and build:**
+   ```bash
+   git clone https://github.com/blazejkustra/react-compiler-marker.git
+   cd react-compiler-marker
+   
+   # Install dependencies and build the bundled server for Zed
+   npm install
+   BUILD_TARGET=zed node esbuild.js --production
+   ```
+
+2. **Install the server command globally:**
+   ```bash
+   # Option A: Create a symlink (recommended)
+   sudo ln -s "$(pwd)/packages/zed-client/react-compiler-marker-lsp" /usr/local/bin/react-compiler-marker-lsp
+   
+   # Option B: Copy the files
+   # sudo cp packages/zed-client/react-compiler-marker-lsp /usr/local/bin/
+   # sudo cp packages/zed-client/server/server.bundle.js /usr/local/bin/
+   ```
+
+3. **Install the Zed extension:**
+   - Open Zed
+   - Go to **Extensions** (Cmd+Shift+X / Ctrl+Shift+X)
+   - Click **Install Dev Extension**
+   - Select the `packages/zed-client` directory from the cloned repository
+
+4. **Done!** Open a React file and the extension will start automatically.
+
+### What Gets Installed
+
+- **Bundled server**: A single `server.bundle.js` file (~3.4MB) with all dependencies included
+- **Wrapper script**: `react-compiler-marker-lsp` executable that launches the bundled server
+- **Zed extension**: WASM extension that connects to the server
+
+### How It Works
+
+The extension looks for the LSP server in this order:
+1. **`react-compiler-marker-lsp` command in PATH** ← This is what we set up in step 2
+2. `node_modules/@react-compiler-marker/server/bin/server.js` in your workspace (fallback)
+
+### Alternative: Per-Project Installation
+
+If you don't want to install the server globally, you can install it per-project:
 
 ```bash
 # In your project directory
-npm install https://github.com/blazejkustra/react-compiler-marker/tarball/main#workspace=packages/server
-
-# Or add to your package.json:
-# "@react-compiler-marker/server": "github:blazejkustra/react-compiler-marker#workspace=packages/server"
+npm install github:blazejkustra/react-compiler-marker#workspace=packages/server
 ```
 
-The server will automatically build itself after installation (via the `prepare` script).
+The server will automatically build itself during installation. This approach works but requires installing the server in every project.
 
-Alternatively, if you have the repository cloned locally:
+### From Zed Extensions (Coming Soon)
 
-```bash
-# From your project directory
-npm install /path/to/react-compiler-marker/packages/server
-```
+The extension will be available in the Zed Extensions registry:
 
-**Note**: The server is written in TypeScript and will be compiled to JavaScript automatically during installation. If you encounter any issues, you can manually build it:
-
-```bash
-cd node_modules/@react-compiler-marker/server
-npm run build
-```
-
-### Step 2: Install the Zed Extension
-
-#### From Source / Development
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/blazejkustra/react-compiler-marker.git
-   cd react-compiler-marker/packages/zed-client
-   ```
-
-2. Build the extension:
-   ```bash
-   cargo build --release --target wasm32-wasip1
-   ```
-
-3. Install as a dev extension in Zed:
-   - Open Zed
-   - Go to Extensions
-   - Click "Install Dev Extension"
+1. Open Zed
+2. Go to **Extensions** (Cmd+Shift+X / Ctrl+Shift+X)
+3. Search for "React Compiler Marker"
+4. Click **Install**
    - Select the `packages/zed-client` directory
 
 #### From Zed Extensions (Coming Soon)

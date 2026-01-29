@@ -5,6 +5,7 @@
  *   node esbuild.js                           - Build VS Code (dev mode)
  *   node esbuild.js --production              - Build VS Code (production)
  *   BUILD_TARGET=nvim node esbuild.js --production  - Build for Neovim
+ *   BUILD_TARGET=zed node esbuild.js --production   - Build for Zed
  *   node esbuild.js --watch                   - Watch mode for VS Code
  */
 const esbuild = require("esbuild");
@@ -61,18 +62,25 @@ async function main() {
   const contexts = [];
 
   // Build the LSP server
+  let serverOutfile;
+  if (buildTarget === "nvim") {
+    serverOutfile = path.join(rootDir, "packages/nvim-client/server/server.bundle.js");
+  } else if (buildTarget === "zed") {
+    serverOutfile = path.join(rootDir, "packages/zed-client/server/server.bundle.js");
+  } else {
+    serverOutfile = path.join(rootDir, "packages/vscode-client/dist/server.js");
+  }
+
   const serverCtx = await esbuild.context({
     ...sharedOptions,
     entryPoints: [path.join(rootDir, "packages/server/src/server.ts")],
-    outfile: buildTarget === "nvim"
-      ? path.join(rootDir, "packages/nvim-client/server/server.bundle.js")
-      : path.join(rootDir, "packages/vscode-client/dist/server.js"),
+    outfile: serverOutfile,
     external: [],
   });
   contexts.push(serverCtx);
 
-  // Build VS Code client extension if not nvim
-  if (buildTarget !== "nvim") {
+  // Build VS Code client extension if not nvim or zed
+  if (buildTarget !== "nvim" && buildTarget !== "zed") {
     const clientCtx = await esbuild.context({
       ...sharedOptions,
       entryPoints: [path.join(rootDir, "packages/vscode-client/src/extension.ts")],
