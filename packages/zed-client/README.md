@@ -82,16 +82,6 @@ The extension will be available in the Zed Extensions registry:
 2. Go to **Extensions** (Cmd+Shift+X / Ctrl+Shift+X)
 3. Search for "React Compiler Marker"
 4. Click **Install**
-   - Select the `packages/zed-client` directory
-
-#### From Zed Extensions (Coming Soon)
-
-The extension will be available in the Zed Extensions registry:
-
-1. Open Zed
-2. Go to **Extensions** (Cmd+Shift+X / Ctrl+Shift+X)
-3. Search for "React Compiler Marker"
-4. Click **Install**
 
 ## Usage
 
