@@ -163,6 +163,23 @@ You can also enable them per-language:
 
 After enabling inlay hints and restarting Zed, you'll see emoji markers appear next to React components showing optimization status.
 
+### Hover Tooltips
+
+When you hover over the emoji markers, you'll see detailed information:
+
+- **Success (✨)**: Confirmation that the component was auto-memoized
+- **Error (🚫)**: Detailed error messages explaining why compilation failed, including:
+  - Error reason and description
+  - Line numbers where the error occurred (e.g., "Lines 15-20")
+
+**Known Limitation**: Unlike VS Code, Zed does not yet support clickable command links in hover tooltips (tracked in [Zed #13756](https://github.com/zed-industries/zed/issues/13756)). This means:
+- ❌ You cannot click on line numbers to jump to the error location
+- ❌ No "Fix with AI" button in tooltips
+- ✅ You can still see all error details and line numbers in the tooltip
+- ✅ You can manually navigate to the line numbers shown
+
+**Workaround**: Note the line number from the tooltip and use `Cmd+G` (or `Ctrl+G`) → type the line number to jump to that line.
+
 ### Commands
 
 **Note**: Zed does not currently support exposing LSP commands in the command palette via extensions. This is a [known limitation](https://github.com/zed-industries/zed/issues/13756) being tracked by the Zed team.
@@ -315,6 +332,29 @@ If you see an error about the LSP server not being found:
 6. Open a React component file (`.jsx`, `.tsx`, `.js`, `.ts` with React components)
    - The server only shows hints for React function components and memo/forwardRef usage
    - Try a simple component like `function MyComponent() { return <div>Test</div>; }`
+
+7. **If hints appear intermittently**: This can happen when typing quickly due to debouncing (300ms delay)
+   - Wait a moment after finishing typing for hints to appear
+   - The server batches updates to avoid performance issues
+   - Check LSP logs - if you see "Generated X inlay hints" but don't see them, it may be a Zed refresh issue
+   - Try closing and reopening the file to force a refresh
+
+### Hints appearing intermittently
+
+If inlay hints sometimes don't show even though LSP logs show they were generated:
+
+1. **Debouncing delay**: The server waits 300ms after you stop typing before processing
+   - This is normal behavior to avoid performance issues
+   - Wait a moment after editing for hints to appear
+
+2. **Force refresh**: If hints don't appear after waiting:
+   - Close and reopen the file
+   - Or make a small edit (add/remove a space) to trigger a refresh
+
+3. **Check for errors in LSP logs**:
+   - Look for "Error checking React Compiler" messages
+   - Verify babel-plugin-react-compiler is correctly installed
+   - Check that the file path doesn't have special characters
 
 ### LSP Server not starting
 
