@@ -61,11 +61,11 @@ Zed editor extension that shows which React components are optimized by the [Rea
    ```
    - Restart Zed for the setting to take effect
 
-5. **Done!** Open a React file and you'll see emoji markers next to your components.
+5. **Done!** Open a React file (`.tsx`, `.jsx`, `.ts`, `.js`) and you'll see emoji markers next to your components.
 
 ### Updating to Latest Version
 
-If you already installed the extension and need to update to get the latest fixes:
+If you already installed the extension and need to update to get the latest fixes (especially if you saw "Language tsx not supported" errors):
 
 ```bash
 cd react-compiler-marker
@@ -76,6 +76,11 @@ BUILD_TARGET=zed node esbuild.js --production
 ```
 
 If you used a symlink (Option A above), the update is automatic. If you copied files (Option B), you'll need to copy them again.
+
+**Recent fixes**:
+- ✅ Added support for Zed's `tsx` and `jsx` language IDs
+- ✅ Improved debug logging for troubleshooting
+- ✅ Updated to LSP 3.17+ inlay hint provider format
 
 ### What Gets Installed
 
@@ -289,9 +294,11 @@ If you see an error about the LSP server not being found:
    - Look for "React Compiler Marker" section
    - You should see messages like:
      - `Inlay hint request for file://...`
-     - `Document language ID: typescript` (or javascript, etc.)
+     - `Document language ID: tsx` (or jsx, typescript, javascript)
+     - `Processing inlay hints for file://...`
      - `Generated X inlay hints`
-   - If you see `Language <id> not supported`, the language ID might not match
+   - **If you see `Language tsx not supported`**: Update to the latest version (see "Updating to Latest Version" above)
+   - The server now supports both Zed IDs (`tsx`, `jsx`) and VS Code IDs (`typescriptreact`, `javascriptreact`)
 
 4. Ensure `babel-plugin-react-compiler` is installed in your project:
    ```bash
