@@ -8,7 +8,7 @@
 .idea
 
 # Neovim plugin files (copied during build)
-/luaa
+/lua
 /plugin
 /server
 
