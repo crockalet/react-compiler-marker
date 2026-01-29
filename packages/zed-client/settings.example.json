@@ -1,0 +1,17 @@
+{
+  // Enable inlay hints to see emoji markers
+  "inlay_hints": {
+    "enabled": true
+  },
+  
+  // Configure the React Compiler Marker LSP
+  "lsp": {
+    "react-compiler-marker": {
+      "initialization_options": {
+        "successEmoji": "✨",
+        "errorEmoji": "🚫",
+        "babelPluginPath": "node_modules/babel-plugin-react-compiler"
+      }
+    }
+  }
+}

@@ -160,7 +160,7 @@ The LSP server provides these commands, but they cannot be accessed through Zed'
 
 ### Configuration
 
-Configure the extension in your Zed settings (`settings.json`):
+Configure the extension in your Zed settings (`settings.json`). You can also use the [example settings file](settings.example.json) as a reference.
 
 ```json
 {
