@@ -52,7 +52,7 @@ npm install /path/to/react-compiler-marker/packages/server
 
 2. Build the extension:
    ```bash
-   cargo build --release --target wasm32-wasi
+   cargo build --release --target wasm32-wasip1
    ```
 
 3. Install as a dev extension in Zed:
@@ -151,7 +151,7 @@ The extension uses a Language Server Protocol (LSP) server that:
 4. Displays inlay hints in your editor
 5. Provides hover tooltips with compilation details
 
-The extension is written in Rust and compiled to WebAssembly for Zed. It looks for the LSP server at `node_modules/@react-compiler-marker/server/bin/server.js` in your workspace, or via the `react-compiler-marker-lsp` command if available in your PATH.
+The extension is written in Rust and compiled to WebAssembly for Zed. It first tries to find `react-compiler-marker-lsp` in your PATH, then falls back to looking for the server at `node_modules/@react-compiler-marker/server/bin/server.js` in your workspace.
 
 ## Troubleshooting
 

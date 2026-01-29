@@ -18,18 +18,15 @@ impl zed::Extension for ReactCompilerMarkerExtension {
             .which("node")
             .ok_or_else(|| "node not found. Please install Node.js".to_string())?;
 
-        // Look for the server in node_modules/@react-compiler-marker/server
+        // Look for the server: first in PATH, then in workspace node_modules
+        // If react-compiler-marker-lsp is in PATH, use it; otherwise try workspace installation
         let server_path = worktree
             .which("react-compiler-marker-lsp")
-            .or_else(|| {
-                // Fallback: try to find in workspace node_modules
-                Some("node_modules/@react-compiler-marker/server/bin/server.js".to_string())
-            })
-            .ok_or_else(|| {
-                "LSP server not found. Please install @react-compiler-marker/server in your project:\n\
-                npm install https://github.com/blazejkustra/react-compiler-marker/tarball/main#workspace=packages/server"
-                    .to_string()
-            })?;
+            .unwrap_or_else(|| {
+                // Fallback: try workspace node_modules
+                // If this path doesn't exist, node will fail with a clear error message
+                "node_modules/@react-compiler-marker/server/bin/server.js".to_string()
+            });
 
         Ok(zed::Command {
             command: node_path,
