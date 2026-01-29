@@ -49,7 +49,19 @@ Zed editor extension that shows which React components are optimized by the [Rea
    - Click **Install Dev Extension**
    - Select the `packages/zed-client` directory from the cloned repository
 
-4. **Done!** Open a React file and the extension will start automatically.
+4. **Enable inlay hints in Zed settings:**
+   - Open Zed settings: `Cmd+,` (macOS) or `Ctrl+,` (Linux/Windows)
+   - Add this configuration:
+   ```json
+   {
+     "inlay_hints": {
+       "enabled": true
+     }
+   }
+   ```
+   - Restart Zed for the setting to take effect
+
+5. **Done!** Open a React file and you'll see emoji markers next to your components.
 
 ### What Gets Installed
 
@@ -87,15 +99,64 @@ The extension will be available in the Zed Extensions registry:
 
 The extension automatically starts when you open a project containing React code. It analyzes your JavaScript/TypeScript files and shows inlay hints next to React components.
 
+**Important**: Inlay hints are disabled by default in Zed. You must enable them in your settings to see the emoji markers.
+
+### Enabling Inlay Hints
+
+To see the success ✨ and error 🚫 emoji markers, add this to your Zed settings:
+
+```json
+{
+  "inlay_hints": {
+    "enabled": true
+  }
+}
+```
+
+You can also enable them per-language:
+
+```json
+{
+  "languages": {
+    "JavaScript": {
+      "inlay_hints": {
+        "enabled": true
+      }
+    },
+    "TypeScript": {
+      "inlay_hints": {
+        "enabled": true
+      }
+    },
+    "TSX": {
+      "inlay_hints": {
+        "enabled": true
+      }
+    },
+    "JSX": {
+      "inlay_hints": {
+        "enabled": true
+      }
+    }
+  }
+}
+```
+
+After enabling inlay hints and restarting Zed, you'll see emoji markers appear next to React components showing optimization status.
+
 ### Commands
 
-Access these commands from the command palette (Cmd+Shift+P / Ctrl+Shift+P):
+**Note**: Zed does not currently support exposing LSP commands in the command palette via extensions. This is a [known limitation](https://github.com/zed-industries/zed/issues/13756) being tracked by the Zed team.
 
-- **React Compiler Marker: Activate Extension** - Enable the extension
-- **React Compiler Marker: Deactivate Extension** - Disable the extension
-- **React Compiler Marker: Check Current File** - Manually refresh markers in the current file
-- **React Compiler Marker: Preview Compiled Output** - View the compiled output of the current file
-- **React Compiler Marker: Generate Report** - Generate a JSON report for the entire workspace
+The LSP server provides these commands, but they cannot be accessed through Zed's command palette yet:
+
+- `react-compiler-marker/activate` - Enable the extension
+- `react-compiler-marker/deactivate` - Disable the extension  
+- `react-compiler-marker/checkOnce` - Manually refresh markers in the current file
+- `react-compiler-marker/getCompiledOutput` - View the compiled output of the current file
+- `react-compiler-marker/generateReport` - Generate a JSON report for the entire workspace
+
+**Workaround**: The extension is activated by default when you open React files, so you'll see the inlay hints automatically (once you've enabled inlay hints in settings).
 
 ### Configuration
 
@@ -103,6 +164,9 @@ Configure the extension in your Zed settings (`settings.json`):
 
 ```json
 {
+  "inlay_hints": {
+    "enabled": true
+  },
   "lsp": {
     "react-compiler-marker": {
       "initialization_options": {
@@ -119,6 +183,7 @@ Configure the extension in your Zed settings (`settings.json`):
 
 | Setting | Default | Description |
 |---------|---------|-------------|
+| `inlay_hints.enabled` | `false` | **Required**: Enable inlay hints to see emoji markers |
 | `successEmoji` | `✨` | Emoji shown for optimized components |
 | `errorEmoji` | `🚫` | Emoji shown for failed components |
 | `babelPluginPath` | `node_modules/babel-plugin-react-compiler` | Path to babel-plugin-react-compiler |
@@ -129,6 +194,9 @@ Configure the extension in your Zed settings (`settings.json`):
 
 ```json
 {
+  "inlay_hints": {
+    "enabled": true
+  },
   "lsp": {
     "react-compiler-marker": {
       "initialization_options": {
@@ -144,6 +212,9 @@ Configure the extension in your Zed settings (`settings.json`):
 
 ```json
 {
+  "inlay_hints": {
+    "enabled": true
+  },
   "lsp": {
     "react-compiler-marker": {
       "initialization_options": {
@@ -186,20 +257,34 @@ If you see an error about the LSP server not being found:
 
 ### Inlay hints not showing
 
-1. Ensure `babel-plugin-react-compiler` is installed in your project:
+**Most common issue**: Inlay hints are disabled by default in Zed.
+
+1. **Enable inlay hints in your Zed settings** (required):
+   ```json
+   {
+     "inlay_hints": {
+       "enabled": true
+     }
+   }
+   ```
+
+2. **Restart Zed** after adding this setting (reloading the workspace may not be enough)
+
+3. Ensure `babel-plugin-react-compiler` is installed in your project:
    ```bash
    npm install babel-plugin-react-compiler
    ```
 
-2. Ensure the LSP server is installed (see above)
+4. Ensure the LSP server is installed (see "LSP Server not found error" above)
 
-3. Check that the LSP server is running:
-   - Open Zed's LSP logs
+5. Check that the LSP server is running:
+   - View → Debug → Open Language Server Logs
    - Look for "React Compiler Marker" server status
+   - Verify it says "initialized" without errors
 
-4. Try manually refreshing:
-   - Open command palette (Cmd+Shift+P / Ctrl+Shift+P)
-   - Run **React Compiler Marker: Check Current File**
+6. Open a React component file (`.jsx`, `.tsx`, `.js`, `.ts` with React components)
+   - The server only shows hints for React function components and memo/forwardRef usage
+   - Try a simple component like `function MyComponent() { return <div>Test</div>; }`
 
 ### LSP Server not starting
 
@@ -210,11 +295,21 @@ If you see an error about the LSP server not being found:
 
 2. Ensure the LSP server is installed (see "LSP Server not found error" above)
 
-3. Check Zed's LSP logs for error messages
+3. Check Zed's LSP logs for error messages:
+   - View → Debug → Open Language Server Logs
 
-4. Ensure the extension is activated:
-   - Open command palette
-   - Run **React Compiler Marker: Activate Extension**
+4. Verify the server command works manually:
+   ```bash
+   react-compiler-marker-lsp --stdio
+   # Or if using workspace installation:
+   node node_modules/@react-compiler-marker/server/bin/server.js --stdio
+   ```
+
+### Commands not in command palette
+
+This is a known limitation of Zed. LSP `executeCommand` commands are not yet exposed in the command palette through extensions. See [Zed issue #13756](https://github.com/zed-industries/zed/issues/13756).
+
+The extension is activated by default, so you don't need to manually activate it. Inlay hints will appear automatically once enabled in settings.
 
 ### babel-plugin-react-compiler not found
 
