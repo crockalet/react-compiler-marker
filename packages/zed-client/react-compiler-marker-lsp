@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+
+// Wrapper script for the bundled React Compiler Marker LSP server
+// This allows the bundled server to be used as an executable
+
+const path = require('path');
+const serverPath = path.join(__dirname, 'server', 'server.bundle.js');
+require(serverPath);

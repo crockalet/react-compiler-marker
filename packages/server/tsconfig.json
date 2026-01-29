@@ -1,12 +1,21 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./out",
     "rootDir": "./src",
     "types": ["node"],
     "resolveJsonModule": true,
     "composite": true,
-    "declaration": true
+    "declaration": true,
+    "jsx": "react",
+    "module": "Node16",
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "Node16"
   },
   "include": ["src/**/*.ts"]
 }

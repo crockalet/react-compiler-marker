@@ -11,3 +11,8 @@
 /lua
 /plugin
 /server
+
+# Zed client build output
+**/zed-client/target/**
+**/zed-client/extension.wasm
+**/zed-client/server/**
