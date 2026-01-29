@@ -33,11 +33,20 @@ npm install https://github.com/blazejkustra/react-compiler-marker/tarball/main#w
 # "@react-compiler-marker/server": "github:blazejkustra/react-compiler-marker#workspace=packages/server"
 ```
 
+The server will automatically build itself after installation (via the `prepare` script).
+
 Alternatively, if you have the repository cloned locally:
 
 ```bash
 # From your project directory
 npm install /path/to/react-compiler-marker/packages/server
+```
+
+**Note**: The server is written in TypeScript and will be compiled to JavaScript automatically during installation. If you encounter any issues, you can manually build it:
+
+```bash
+cd node_modules/@react-compiler-marker/server
+npm run build
 ```
 
 ### Step 2: Install the Zed Extension
