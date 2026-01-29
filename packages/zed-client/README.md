@@ -63,6 +63,20 @@ Zed editor extension that shows which React components are optimized by the [Rea
 
 5. **Done!** Open a React file and you'll see emoji markers next to your components.
 
+### Updating to Latest Version
+
+If you already installed the extension and need to update to get the latest fixes:
+
+```bash
+cd react-compiler-marker
+git pull
+npm install
+BUILD_TARGET=zed node esbuild.js --production
+# Restart Zed to reload the extension
+```
+
+If you used a symlink (Option A above), the update is automatic. If you copied files (Option B), you'll need to copy them again.
+
 ### What Gets Installed
 
 - **Bundled server**: A single `server.bundle.js` file (~3.4MB) with all dependencies included
@@ -270,14 +284,23 @@ If you see an error about the LSP server not being found:
 
 2. **Restart Zed** after adding this setting (reloading the workspace may not be enough)
 
-3. Ensure `babel-plugin-react-compiler` is installed in your project:
+3. **Check LSP server logs** to see what's happening:
+   - In Zed: **View → Debug → Open Language Server Logs**
+   - Look for "React Compiler Marker" section
+   - You should see messages like:
+     - `Inlay hint request for file://...`
+     - `Document language ID: typescript` (or javascript, etc.)
+     - `Generated X inlay hints`
+   - If you see `Language <id> not supported`, the language ID might not match
+
+4. Ensure `babel-plugin-react-compiler` is installed in your project:
    ```bash
    npm install babel-plugin-react-compiler
    ```
 
-4. Ensure the LSP server is installed (see "LSP Server not found error" above)
+5. Ensure the LSP server is installed (see "LSP Server not found error" above)
 
-5. Check that the LSP server is running:
+6. Check that the LSP server is running:
    - View → Debug → Open Language Server Logs
    - Look for "React Compiler Marker" server status
    - Verify it says "initialized" without errors
