@@ -30,7 +30,7 @@ Zed editor extension that shows which React components are optimized by the [Rea
 
 2. Build the extension:
    ```bash
-   cargo build --release
+   cargo build --release --target wasm32-wasi
    ```
 
 3. Install as a dev extension in Zed:
@@ -188,7 +188,7 @@ Or configure a custom path in settings:
 
 ```bash
 cd packages/zed-client
-cargo build --release
+cargo build --release --target wasm32-wasi
 ```
 
 The compiled extension will be in `target/wasm32-wasi/release/`.
