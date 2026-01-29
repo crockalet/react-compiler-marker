@@ -105,7 +105,9 @@ connection.onInitialize((params: InitializeParams): InitializeResult => {
     },
     capabilities: {
       textDocumentSync: TextDocumentSyncKind.Incremental,
-      inlayHintProvider: true,
+      inlayHintProvider: {
+        resolveProvider: false,
+      },
       hoverProvider: hoverEnabled,
       executeCommandProvider: {
         commands: [
@@ -147,22 +149,29 @@ connection.onDidChangeConfiguration((change) => {
 
 // Handle inlay hints request with debouncing
 connection.languages.inlayHint.on(async (params: InlayHintParams): Promise<InlayHint[] | null> => {
+  logMessage(`Inlay hint request for ${params.textDocument.uri}`);
+  
   if (!isActivated) {
+    logMessage("Extension not activated, returning null");
     return null;
   }
 
   const document = documents.get(params.textDocument.uri);
   if (!document) {
+    logMessage(`Document not found for ${params.textDocument.uri}`);
     return null;
   }
 
   // Only process JS/TS/JSX/TSX files
   const languageId = document.languageId;
+  logMessage(`Document language ID: ${languageId}`);
+  
   if (!["javascript", "typescript", "javascriptreact", "typescriptreact"].includes(languageId)) {
+    logMessage(`Language ${languageId} not supported for inlay hints`);
     return null;
   }
 
-  logMessage(`Process inlay hints for ${params.textDocument.uri}`);
+  logMessage(`Processing inlay hints for ${params.textDocument.uri}`);
 
   // Use document URI as the debounce key
   return debounce(params.textDocument.uri, () => {
@@ -179,7 +188,7 @@ connection.languages.inlayHint.on(async (params: InlayHintParams): Promise<Inlay
         globalSettings.babelPluginPath
       );
 
-      return generateInlayHints(
+      const hints = generateInlayHints(
         document,
         successfulCompilations,
         failedCompilations,
@@ -189,6 +198,9 @@ connection.languages.inlayHint.on(async (params: InlayHintParams): Promise<Inlay
         tooltipFormat,
         clientName
       );
+      
+      logMessage(`Generated ${hints.length} inlay hints (${successfulCompilations.length} success, ${failedCompilations.length} failed)`);
+      return hints;
     } catch (error: any) {
       logError(`Error checking React Compiler: ${error?.message}`);
       return null;
